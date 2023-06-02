@@ -1,3 +1,10 @@
+#----------------------------------------------------
+# 生成式预训练语言模型：理论与实战
+# 深蓝学院 课程 
+# 课程链接：https://www.shenlanxueyuan.com/course/620
+#
+# 作者 **黄佳**
+#----------------------------------------------------
 import numpy as np # 导入numpy库
 import torch # 导入torch库
 import torch.nn as nn # 导入torch.nn库
