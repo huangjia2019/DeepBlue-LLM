@@ -142,12 +142,16 @@ class Decoder(nn.Module):
         self.layers = nn.ModuleList([DecoderLayer() for _ in range(n_layers)]) # 初始化N个解码器层
 
     def forward(self, dec_inputs):        
-        positions = torch.arange(len(dec_inputs), device=dec_inputs.device).unsqueeze(-1) #位置信息        
+        positions = torch.arange(len(dec_inputs), device=dec_inputs.device).unsqueeze(-1) # 位置信息        
         inputs_embedding = self.src_emb(dec_inputs) + self.pos_emb(positions) # 词嵌入与位置编码相加        
-        attn_mask = get_attn_subsequent_mask(inputs_embedding).to(dec_inputs.device) # 生成自注意力掩码        
+        attn_mask = get_attn_subsequent_mask(inputs_embedding).to(dec_inputs.device) # 生成自注意力掩码
+        dec_outputs =  inputs_embedding # 初始化解码器输入，这是第一层解码器层的输入      
         for layer in self.layers:
-            dec_outputs = layer(inputs_embedding, attn_mask) # 将输入数据传递给解码器层
-        return dec_outputs
+            # 每个解码器层接收前一层的输出作为输入，并生成新的输出
+            # 对于第一层解码器层，其输入是dec_outputs，即词嵌入和位置编码的和
+            # 对于后续的解码器层，其输入是前一层解码器层的输出            
+            dec_outputs = layer(dec_outputs, attn_mask) # 将输入数据传递给解码器层
+        return dec_outputs # 返回最后一个解码器层的输出，作为整个解码器的输出
     
 class GPT(nn.Module):
     def __init__(self, corpus):
